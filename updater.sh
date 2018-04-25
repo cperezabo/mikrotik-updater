@@ -19,6 +19,11 @@ else
     fi
 fi
 
+if [[ ! -f "$private_key" ]]; then
+    echo "Specified Private Key doesn't exists"
+    exit 1
+fi
+
 ros_command () {
     ssh -i $private_key -l $username $h $1
 }
