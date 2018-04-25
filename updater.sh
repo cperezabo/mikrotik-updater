@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo "MikroTik Updater"
+echo "Version: 1.0.0"
+echo "Created by: Cristián Pérez"
+echo "--------------------------"
+
 updaterpath="$( cd "$(dirname "$0")" ; pwd -P )"
 sourcefile="$updaterpath/sources/$1"
 
@@ -17,11 +22,6 @@ fi
 ros_command () {
     ssh -i $private_key -l $username $h $1
 }
-
-echo "MikroTik Updater"
-echo "Version: 1.0.0"
-echo "Created by: Cristián Pérez"
-echo "--------------------------"
 
 for h in "${hosts[@]}"
 do
