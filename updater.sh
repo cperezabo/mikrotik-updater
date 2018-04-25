@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "MikroTik Updater"
-echo "Version: 1.0.0"
+echo "Version: 1.1.0"
 echo "Created by: Cristián Pérez"
 echo "--------------------------"
 

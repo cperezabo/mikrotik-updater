@@ -15,7 +15,29 @@ You need to create a source file inside the `sources` folder and fill up the fol
 After having created the source file, simply execute the script 🤓
 
 ```bash
-bash updater.sh sources/demo
+$ bash updater.sh demo
+```
+
+> It will look under the `sources` folder for a `demo` file
+
+or you can specify an absolute path
+
+```bash
+$ bash updater.sh /path/to/sources/demo
 ```
 
 You are done! 👍🏻
+
+---
+
+Additionally you can create a global alias for the updater
+
+```bash
+$ alias mikrotik-updater 'bash /path/to/updater.sh'
+```
+
+and execute it simply as
+
+```bash
+$ mikrotik-updater demo
+```
