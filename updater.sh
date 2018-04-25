@@ -1,6 +1,18 @@
 #!/bin/bash
 
-source $1
+updaterpath="$( cd "$(dirname "$0")" ; pwd -P )"
+sourcefile="$updaterpath/sources/$1"
+
+if [[ -f "$sourcefile" ]]; then
+    source "$sourcefile"
+else
+    if [[ -f "$1" ]]; then
+        source "$1"
+    else
+        echo "Source file doesn't exists"
+        exit 1
+    fi
+fi
 
 ros_command () {
     ssh -i $private_key -l $username $h $1
