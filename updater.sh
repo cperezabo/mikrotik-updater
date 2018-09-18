@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "MikroTik Updater"
-echo "Version: 1.1.0"
+echo "Version: 1.1.1"
 echo "Created by: Cristián Pérez"
 echo "--------------------------"
 
@@ -25,7 +25,7 @@ if [[ ! -f "$private_key" ]]; then
 fi
 
 ros_command () {
-    ssh -i $private_key -l $username $h $1
+    ssh -o ConnectTimeout=5 -i $private_key -l $username $h $1
 }
 
 for h in "${hosts[@]}"
