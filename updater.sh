@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "MikroTik Updater"
-echo "Version: 1.1.1"
+echo "Version: 1.2.0"
 echo "Created by: Cristián Pérez"
 echo "--------------------------"
 
@@ -38,9 +38,22 @@ do
     if [[ $status == *"System is already up to date"* ]];
     then
         echo "  --> System up to date 👍🏻"
+
+        firmware_cur="$(ros_command ':put [/system routerboard get current-firmware]')"
+        firmware_upd="$(ros_command ':put [/system routerboard get upgrade-firmware]')"
+
+        if [[ $firmware_cur == $firmware_upd ]];
+        then
+            echo "  --> Firmware up to date 👍🏻"
+        else
+            echo "  --> Updating firmware 🛠 ... "
+            ros_command '/system routerboard upgrade'
+            ros_command ':execute "/system reboot"' # I think it only works if auto-upgrade=yes
+        fi
     else
         echo "  --> Updating system 🛠 ... "
-        ros_command '/system package update install' > /dev/null
-        echo "  --> Device rebooted 👍🏻"
+        ros_command '/system package update install' | xargs -I % bash -c "echo -ne '\r%';"
+        echo -ne '\r                                                                     \r';
+        echo "  --> Device rebooting 👍🏻"
     fi
 done
