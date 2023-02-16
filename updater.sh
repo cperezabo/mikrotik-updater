@@ -32,6 +32,10 @@ for h in "${hosts[@]}"
 do
     echo
     echo "Gathering information from $h ..."
+    device_name="$(ros_command ':put [/system identity get name]')"
+    device_name="${device_name%?}" # the name comes with an extra character at the end so we remove it.
+
+    echo "Checking for updates on $device_name ($h) ..."
     ros_command '/system package update check-for-updates once' > /dev/null
     status="$(ros_command ':put [/system package update get status]')"
 
