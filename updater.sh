@@ -41,21 +41,24 @@ do
 
     if [[ $status == *"System is already up to date"* ]];
     then
-        echo "  --> System up to date 👍🏻"
+        echo "  --> System up to date 👍"
 
         firmware_cur="$(ros_command ':put [/system routerboard get current-firmware]')"
         firmware_upd="$(ros_command ':put [/system routerboard get upgrade-firmware]')"
 
         if [[ $firmware_cur == $firmware_upd ]];
         then
-            echo "  --> Firmware up to date 👍🏻"
+            echo "  --> Firmware up to date 👍"
         else
             echo "  --> Updating firmware 🛠 ... "
             ros_command '/system routerboard upgrade'
             ros_command ':execute "/system reboot"' # I think it only works if auto-upgrade=yes
+            echo "  --> Firmware updated 👍"
+            echo "  --> Rebooting ..."
         fi
     else
         ros_command '/system package update install' | xargs -I % bash -c "tput el && echo -ne '%\r' | sed -e 's/^[ \\t]*status:/  --> Updating system 🛠:/g'";
-        echo "  --> Device rebooting 👍🏻"
+        echo "  --> System updated 👍"
+        echo "  --> Rebooting ..."
     fi
 done
