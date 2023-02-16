@@ -51,9 +51,7 @@ do
             ros_command ':execute "/system reboot"' # I think it only works if auto-upgrade=yes
         fi
     else
-        echo "  --> Updating system 🛠 ... "
-        ros_command '/system package update install' | xargs -I % bash -c "echo -ne '\r%';"
-        echo -ne '\r                                                                     \r';
+        ros_command '/system package update install' | xargs -I % bash -c "tput el && echo -ne '%\r' | sed -e 's/^[ \\t]*status:/  --> Updating system 🛠:/g'";
         echo "  --> Device rebooting 👍🏻"
     fi
 done
