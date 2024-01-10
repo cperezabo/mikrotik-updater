@@ -25,7 +25,7 @@ if [[ ! -f "$private_key" ]]; then
 fi
 
 ros_command () {
-    ssh -o ConnectTimeout=5 -i $private_key -l $username $h $1
+    ssh -o ConnectTimeout=5 -i $private_key -l $username $h $1 2>/dev/null
 }
 
 for h in "${hosts[@]}"
