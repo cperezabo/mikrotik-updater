@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "MikroTik Updater"
-echo "Version: 1.3.1"
-echo "Created by: Cristián Pérez"
+echo "Version: 1.4.0"
+echo "Created by Cristián Pérez"
 echo "--------------------------"
 
 updaterpath="$( cd "$(dirname "$0")" ; pwd -P )"
@@ -19,13 +19,19 @@ else
     fi
 fi
 
-if [[ ! -f "$private_key" ]]; then
+if [[ -n "$private_key" && ! -f "$private_key" ]]; then
     echo "Specified Private Key doesn't exists"
     exit 1
 fi
 
 ros_command () {
-    ssh -o ConnectTimeout=5 -i $private_key -l $username $h $1 2>/dev/null
+    local ssh_command="ssh -o ConnectTimeout=5"
+
+    if [[ -n "$private_key" ]]; then
+        ssh_command+=" -i $private_key"
+    fi
+
+    $ssh_command -l "$username" "$h" "$1" 2>/dev/null
 }
 
 for h in "${hosts[@]}"
