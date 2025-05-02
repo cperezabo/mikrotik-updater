@@ -34,6 +34,10 @@ ros_command () {
     $ssh_command -l "$username" "$h" "$1" 2>/dev/null
 }
 
+system_update_command() {
+    ros_command "/system package update $1" | xargs -I % bash -c "tput el && echo -ne '%\r' | sed -e 's/^[ \\t]*status:/  --> Updating system 🛠:/g'";
+}
+
 for h in "${hosts[@]}"
 do
     echo
@@ -68,7 +72,8 @@ do
             echo "  --> Rebooting ..."
         fi
     else
-        ros_command '/system package update install' | xargs -I % bash -c "tput el && echo -ne '%\r' | sed -e 's/^[ \\t]*status:/  --> Updating system 🛠:/g'";
+        system_update_command 'check-for-updates'
+        system_update_command 'install'
         echo "  --> System updated 👍"
         echo "  --> Rebooting ..."
     fi
