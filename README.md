@@ -28,16 +28,18 @@ $ bash updater.sh /path/to/sources/demo
 
 You are done! 👍🏻
 
----
+## Use it directly from GitHub
 
-Additionally you can create a global alias for the updater
+Create an alias so you always get the current version
+
+Example:
 
 ```bash
-$ alias mikrotik-updater 'bash /path/to/updater.sh'
+$ alias mikrotik-updater 'curl -sL https://raw.githubusercontent.com/cperezabo/mikrotik-updater/refs/heads/master/updater.sh | bash -s --'
 ```
 
 and execute it simply as
 
 ```bash
-$ mikrotik-updater demo
+$ mikrotik-updater /path/to/sources/demo
 ```
