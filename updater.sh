@@ -52,29 +52,34 @@ do
 
     echo "Checking for updates on $device_name ($h) ..."
     ros_command '/system package update check-for-updates once' > /dev/null
-    status="$(ros_command ':put [/system package update get status]')"
+    installed_version="$(ros_command ':put [/system package update get installed-version]')"
+    installed_version="${installed_version%?}"
+    latest_version="$(ros_command ':put [/system package update get latest-version]')"
+    latest_version="${latest_version%?}"
 
-    if [[ $status == *"System is already up to date"* ]];
+    if [[ "$installed_version" == "$latest_version" ]];
     then
-        echo "  --> System up to date 👍"
+        echo "  --> System up to date ($installed_version) 👍"
 
         firmware_cur="$(ros_command ':put [/system routerboard get current-firmware]')"
+        firmware_cur="${firmware_cur%?}"
         firmware_upd="$(ros_command ':put [/system routerboard get upgrade-firmware]')"
+        firmware_upd="${firmware_upd%?}"
 
         if [[ $firmware_cur == $firmware_upd ]];
         then
-            echo "  --> Firmware up to date 👍"
+            echo "  --> Firmware up to date ($firmware_cur) 👍"
         else
             echo "  --> Updating firmware 🛠 ... "
             ros_command '/system routerboard upgrade'
             ros_command ':execute "/system reboot"' # I think it only works if auto-upgrade=yes
-            echo "  --> Firmware updated 👍"
+            echo "  --> Firmware updated from $firmware_cur to $firmware_upd 👍"
             echo "  --> Rebooting ..."
         fi
     else
         system_update_command 'check-for-updates'
         system_update_command 'install'
-        echo "  --> System updated 👍"
+        echo "  --> System updated from $installed_version to $latest_version 👍"
         echo "  --> Rebooting ..."
     fi
 done
