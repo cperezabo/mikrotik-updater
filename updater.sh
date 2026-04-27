@@ -35,7 +35,16 @@ ros_command () {
 }
 
 system_update_command() {
-    ros_command "/system package update $1" | xargs -I % bash -c "tput el && echo -ne '%\r' | sed -e 's/^[ \\t]*status:/  --> Updating system 🛠:/g'";
+    local rendered=0
+    while IFS= read -r line; do
+        [[ "$line" =~ ^[[:space:]]*$ ]] && continue
+        case "$line" in
+            *status:*) line="  --> Updating system 🛠:${line#*status:}" ;;
+        esac
+        printf '\r\033[K%s' "$line"
+        rendered=1
+    done < <(ros_command "/system package update $1")
+    (( rendered )) && printf '\n'
 }
 
 for h in "${hosts[@]}"
