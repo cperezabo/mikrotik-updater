@@ -15,7 +15,7 @@ else
     bold='' boldoff='' default='' green='' bgreen='' yellow='' red='' cyan='' dim='' reset=''
 fi
 
-echo "${bold}MikroTik Updater v1.4.1${reset}"
+echo "${bold}MikroTik Updater v1.5.0${reset}"
 echo "--------------------------"
 
 updaterpath="$( cd "$(dirname "$0")" ; pwd -P )"
