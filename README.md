@@ -10,7 +10,13 @@ You need to create a source file inside the `sources` folder and fill up the fol
 - `username`: The username linked to the public RSA key.
 - `hosts`: An array of the devices to be updated.
 
-> You can find a `demo` file inside `sources` for a quickstart.
+Example contents:
+
+```bash
+private_key='/Users/myname/.ssh/myprivatekey'
+username='myadmin'
+hosts=( '192.168.0.1' '10.0.0.2' '10.1.1.1' )
+```
 
 After having created the source file, simply execute the script 🤓
 
