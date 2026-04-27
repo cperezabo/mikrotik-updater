@@ -1,8 +1,21 @@
 #!/bin/bash
 
-echo "MikroTik Updater"
-echo "Version: 1.4.1"
-echo "Created by Cristián Pérez"
+if [[ -t 1 ]]; then
+    bold=$'\033[1m'
+    boldoff=$'\033[22m'
+    default=$'\033[39m'
+    green=$'\033[32m'
+    bgreen=$'\033[92m'
+    yellow=$'\033[33m'
+    red=$'\033[31m'
+    cyan=$'\033[36m'
+    dim=$'\033[2m'
+    reset=$'\033[0m'
+else
+    bold='' boldoff='' default='' green='' bgreen='' yellow='' red='' cyan='' dim='' reset=''
+fi
+
+echo "${bold}MikroTik Updater v1.4.1${reset}"
 echo "--------------------------"
 
 updaterpath="$( cd "$(dirname "$0")" ; pwd -P )"
@@ -14,13 +27,13 @@ else
     if [[ -f "$1" ]]; then
         source "$1"
     else
-        echo "Source file doesn't exists"
+        echo "${red}Source file doesn't exists${reset}"
         exit 1
     fi
 fi
 
 if [[ -n "$private_key" && ! -f "$private_key" ]]; then
-    echo "Specified Private Key doesn't exists"
+    echo "${red}Specified Private Key doesn't exists${reset}"
     exit 1
 fi
 
@@ -39,7 +52,7 @@ system_update_command() {
     while IFS= read -r line; do
         [[ "$line" =~ ^[[:space:]]*$ ]] && continue
         case "$line" in
-            *status:*) line="  --> Updating system 🛠:${line#*status:}" ;;
+            *status:*) line="${cyan}  --> Updating system 🛠️:${line#*status:}${reset}" ;;
         esac
         printf '\r\033[K%s' "$line"
         rendered=1
@@ -50,16 +63,16 @@ system_update_command() {
 for h in "${hosts[@]}"
 do
     echo
-    echo "Gathering information from $h ..."
+    echo "Gathering information from ${bold}$h${reset} ..."
     device_name="$(ros_command ':put [/system identity get name]')"
     device_name="${device_name%?}" # the name comes with an extra character at the end so we remove it.
 
     if [ -z "$device_name" ]; then
-        echo "  --> Failed to gather information. Skipping update. ⚠️"
+        echo "${yellow}  --> Failed to gather information. Skipping update. ⚠️${reset}"
         continue
     fi
 
-    echo "Checking for updates on $device_name ($h) ..."
+    echo "Checking for updates on ${bold}$device_name${reset} (${bold}$h${reset}) ..."
     ros_command '/system package update check-for-updates once' > /dev/null
     installed_version="$(ros_command ':put [/system package update get installed-version]')"
     installed_version="${installed_version%?}"
@@ -68,7 +81,7 @@ do
 
     if [[ "$installed_version" == "$latest_version" ]];
     then
-        echo "  --> System up to date ($installed_version) 👍"
+        echo "${green}  --> System up to date (${default}${bold}$installed_version${boldoff}${green}) 👍${reset}"
 
         firmware_cur="$(ros_command ':put [/system routerboard get current-firmware]')"
         firmware_cur="${firmware_cur%?}"
@@ -77,18 +90,18 @@ do
 
         if [[ $firmware_cur == $firmware_upd ]];
         then
-            echo "  --> Firmware up to date ($firmware_cur) 👍"
+            echo "${green}  --> Firmware up to date (${default}${bold}$firmware_cur${boldoff}${green}) 👍${reset}"
         else
-            echo "  --> Updating firmware 🛠 ... "
+            echo "${cyan}  --> Updating firmware 🛠️ ... ${reset}"
             ros_command '/system routerboard upgrade'
             ros_command ':execute "/system reboot"' # I think it only works if auto-upgrade=yes
-            echo "  --> Firmware updated from $firmware_cur to $firmware_upd 👍"
-            echo "  --> Rebooting ..."
+            echo "${bgreen}  --> Firmware updated from ${default}${bold}$firmware_cur${boldoff}${bgreen} to ${default}${bold}$firmware_upd${boldoff}${bgreen} 🎉${reset}"
+            echo "${dim}  --> Rebooting ...${reset}"
         fi
     else
         system_update_command 'check-for-updates'
         system_update_command 'install'
-        echo "  --> System updated from $installed_version to $latest_version 👍"
-        echo "  --> Rebooting ..."
+        echo "${bgreen}  --> System updated from ${default}${bold}$installed_version${boldoff}${bgreen} to ${default}${bold}$latest_version${boldoff}${bgreen} 🎉${reset}"
+        echo "${dim}  --> Rebooting ...${reset}"
     fi
 done
